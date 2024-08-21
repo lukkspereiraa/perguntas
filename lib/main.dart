@@ -67,7 +67,12 @@ class _PerguntaAppState extends State<PerguntaApp> {
                   ...widgetRespostas,
                 ],
               )
-            : null,
+            : Center(
+                child: Text(
+                  "Acabou",
+                  style: TextStyle(fontSize: 30),
+                ),
+              ),
       ),
     );
   }
