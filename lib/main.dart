@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:perguntas/questao.dart';
 import 'package:perguntas/responder.dart';
@@ -7,33 +9,41 @@ void main() => runApp(const PerguntaApp());
 class _PerguntaAppState extends State<PerguntaApp> {
   var perguntaSelecinada = 0;
   void _responder() {
-    setState(() {
-      perguntaSelecinada++;
-    });
+    if (temPerguntaSelecinada) {
+      setState(() {
+        perguntaSelecinada++;
+      });
+    }
+  }
+
+  final List<Map<String, Object>> _perguntas = const [
+    {
+      'texto': 'Qual é sua cor favorita?',
+      'resposta': ['Preto', 'Branco', 'Verde'],
+    },
+    {
+      'texto': 'Qual é sua animal favorito?',
+      'resposta': ['Largado', 'Tamandua', 'Anta'],
+    },
+    {
+      'texto': 'Qual é seu desenho favorito?',
+      'resposta': ['One Pince', 'Dragon ball ', 'Naruto'],
+    },
+  ];
+
+  bool get temPerguntaSelecinada {
+    return perguntaSelecinada < _perguntas.length;
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, Object>> perguntas = [
-      {
-        'texto': 'Qual é sua cor favorita?',
-        'resposta': ['Preto', 'Branco', 'Verde'],
-      },
-      {
-        'texto': 'Qual é sua animal favorito?',
-        'resposta': ['Largado', 'Tamandua', 'Anta'],
-      },
-      {
-        'texto': 'Qual é seu desenho favorito?',
-        'resposta': ['One Pince', 'Dragon ball ', 'Naruto'],
-      },
-    ];
-
-    List<String> respostas = perguntas[perguntaSelecinada].cast()['resposta'];
+    List<String> respostas = temPerguntaSelecinada
+        ? _perguntas[perguntaSelecinada].cast()['resposta']
+        : [];
     //feito com map
     List<Widget> widgetRespostas =
         respostas.map((toElement) => Respostas(toElement, _responder)).toList();
-    // feito com for 
+    // feito com for
     // for (String textoResposta in respostas) {
     //   widgetRespostas.add(Respostas(textoResposta, _responder));
     // }
@@ -52,12 +62,14 @@ class _PerguntaAppState extends State<PerguntaApp> {
             "Perguntas",
           ),
         ),
-        body: Column(
-          children: [
-            Questao(perguntas[perguntaSelecinada]['texto'].toString()),
-            ...widgetRespostas,
-          ],
-        ),
+        body: temPerguntaSelecinada
+            ? Column(
+                children: [
+                  Questao(_perguntas[perguntaSelecinada]['texto'].toString()),
+                  ...widgetRespostas,
+                ],
+              )
+            : null,
       ),
     );
   }
