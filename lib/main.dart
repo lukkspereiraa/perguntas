@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:perguntas/questao.dart';
-import 'package:perguntas/responder.dart';
+import 'package:perguntas/questionario.dart';
 import 'package:perguntas/resultado.dart';
 
 void main() => runApp(const PerguntaApp());
 
 class _PerguntaAppState extends State<PerguntaApp> {
-  var perguntaSelecinada = 0;
+  var _perguntaSelecinada = 0;
   void _responder() {
     if (temPerguntaSelecinada) {
       setState(() {
-        perguntaSelecinada++;
+        _perguntaSelecinada++;
       });
     }
   }
@@ -31,22 +30,11 @@ class _PerguntaAppState extends State<PerguntaApp> {
   ];
 
   bool get temPerguntaSelecinada {
-    return perguntaSelecinada < _perguntas.length;
+    return _perguntaSelecinada < _perguntas.length;
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> respostas = temPerguntaSelecinada
-        ? _perguntas[perguntaSelecinada].cast()['resposta']
-        : [];
-    //feito com map
-    List<Widget> widgetRespostas =
-        respostas.map((toElement) => Respostas(toElement, _responder)).toList();
-    // feito com for
-    // for (String textoResposta in respostas) {
-    //   widgetRespostas.add(Respostas(textoResposta, _responder));
-    // }
-
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
@@ -62,12 +50,10 @@ class _PerguntaAppState extends State<PerguntaApp> {
             ),
           ),
           body: temPerguntaSelecinada
-              ? Column(
-                  children: [
-                    Questao(_perguntas[perguntaSelecinada]['texto'].toString()),
-                    ...widgetRespostas,
-                  ],
-                )
+              ? Questionario(
+                  perguntas: _perguntas,
+                  perguntaSelecinada: _perguntaSelecinada,
+                  qundoResponder: _responder)
               : Resultado("Final")),
     );
   }
